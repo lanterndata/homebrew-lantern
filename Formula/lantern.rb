@@ -8,12 +8,12 @@ class Lantern < Formula
   license "MIT"
 
   depends_on "cmake" => :build
-  depends_on "make" => :build
   depends_on "gcc" => :build
+  depends_on "make" => :build
 
   def which(cmd)
-    exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
-    ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exts = ENV["PATHEXT"] ? ENV["PATHEXT"].split(";") : [""]
+    ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
       exts.each do |ext|
         exe = File.join(path, "#{cmd}#{ext}")
         return exe if File.executable?(exe) && !File.directory?(exe)
@@ -25,38 +25,35 @@ class Lantern < Formula
   def self.postgresql
     # Try to get the most recent postgres version first
     if File.exist?(Formula["postgresql@16"].opt_bin)
-      return Formula["postgresql@16"]
+      Formula["postgresql@16"]
     elsif File.exist?(Formula["postgresql@15"].opt_bin)
-      return Formula["postgresql@15"]
+      Formula["postgresql@15"]
     elsif File.exist?(Formula["postgresql@14"].opt_bin)
-      return Formula["postgresql@14"]
+      Formula["postgresql@14"]
     elsif File.exist?(Formula["postgresql@13"].opt_bin)
-      return Formula["postgresql@13"]
+      Formula["postgresql@13"]
     elsif File.exist?(Formula["postgresql@12"].opt_bin)
-      return Formula["postgresql@12"]
+      Formula["postgresql@12"]
     elsif File.exist?(Formula["postgresql@11"].opt_bin)
-      return Formula["postgresql@11"]
-    else
-      return nil
+      Formula["postgresql@11"]
     end
   end
 
-  if !postgresql
+  unless postgresql
     # Install postgres 15 if no version is found
     depends_on "postgresql@15" => :build
   end
 
-
   def pgconfig
-   postgresql = self.class.postgresql
-   pg_config = which("pg_config")
-   if pg_config != nil
+    postgresql = self.class.postgresql
+    pg_config = which("pg_config")
+    if !pg_config.nil?
       # pg_config exists in path use that
-      return pg_config
+      pg_config
     elsif File.file?("/usr/local/bin/pg_config")
-      return "/usr/local/bin/pg_config"
+      "/usr/local/bin/pg_config"
     else
-      return postgresql.opt_bin/"pg_config"
+      postgresql.opt_bin/"pg_config"
     end
   end
 
@@ -66,9 +63,9 @@ class Lantern < Formula
     ENV["C_INCLUDE_PATH"] = "/usr/local/include"
     ENV["CPLUS_INCLUDE_PATH"] = "/usr/local/include"
     ENV["PG_CONFIG"] = pg_config
-    
-    system "cmake -DUSEARCH_NO_MARCH_NATIVE=ON -S . -B build"
-    system "make -C build"
+
+    system "cmake", "-DUSEARCH_NO_MARCH_NATIVE=ON", "-S", ".", "-B", "build"
+    system "make", "-C", "build"
 
     share.install "build/lantern.control"
     share.install Dir["build/lantern--*.sql"]
@@ -82,7 +79,7 @@ class Lantern < Formula
       renamed_file = "lantern--#{basename}"
       share.install(file => renamed_file)
     end
-    
+
     libdir = `#{pg_config} --pkglibdir`
     sharedir = `#{pg_config} --sharedir`
 
@@ -91,7 +88,7 @@ class Lantern < Formula
 
     `echo "#!/bin/bash" >> lantern_install`
     `echo "echo 'Moving lantern files into postgres extension folder...'" >> lantern_install`
-    
+
     if File.file?("build/lantern.so")
       lib.install "build/lantern.so"
       `echo "/usr/bin/install -c -m 755 #{lib}/lantern.so #{libdir.strip}/" >> lantern_install`
@@ -102,10 +99,10 @@ class Lantern < Formula
 
     `echo "/usr/bin/install -c -m 644 #{share}/* #{sharedir.strip}/extension/" >> lantern_install`
     `echo "echo 'Success.'" >> lantern_install`
-    
+
     bin.install "lantern_install"
   end
-  
+
   def caveats
     <<~EOS
       Thank you for installing Lantern!
