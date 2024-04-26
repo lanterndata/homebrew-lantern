@@ -1,9 +1,9 @@
 class Lantern < Formula
   desc "Is a postgres extension that provides blazingly fast vector indexes"
   homepage "https://lantern.dev"
-  url "https://github.com/lanterndata/lantern/releases/download/v0.2.4/lantern-v0.2.4-source.tar.gz"
-  version "0.2.4"
-  sha256 "6e8cb28132d904e25d5dedc95d2e16a24ae686f4f2a50a2f0898abb6433ff299"
+  url "https://github.com/lanterndata/lantern/releases/download/v0.2.5/lantern-v0.2.5-source.tar.gz"
+  version "0.2.5"
+  sha256 "af751a90afd0e48e38c89ceec68a39f29f37f3c4d670e3ba9510fdbb814124cf"
 
   license "MIT"
 
