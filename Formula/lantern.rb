@@ -64,8 +64,8 @@ class Lantern < Formula
     ENV["CPLUS_INCLUDE_PATH"] = "/usr/local/include"
     ENV["PG_CONFIG"] = pg_config
 
-    system "cmake", "-DMARCH_NATIVE=OFF", "-DBUILD_FOR_DISTRIBUTING=YES", "-S", ".", "-B", "build"
-    system "make", "-C", "build"
+    system "cmake", "-DBUILD_FOR_DISTRIBUTING=YES", "-S", "./lantern_hnsw", "-B", "build"
+    system "make", "-C", "build", "-j"
 
     share.install "build/lantern.control"
     share.install Dir["build/lantern--*.sql"]
